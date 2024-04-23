@@ -2,7 +2,7 @@
  const video_upload_stamp = 1713837476679
  let descriptionTemplate = `
  Thanks for watching the video!
- the source code can be found here: [once i have uploaded it]
+ the source code can be found here: https://github.com/NeonGamerBot-QK/yt-update-video
  Insporation: https://www.youtube.com/watch?v=BxV14h0kFs0
  visit my site: https://saahild.com
 
