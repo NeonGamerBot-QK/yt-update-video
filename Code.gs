@@ -1,4 +1,4 @@
- const part = 'snippet,statistics,id,topicDetails,status,contentDetails';
+ const part = 'snippet,statistics,id,topicDetails,status,contentDetails'
  const video_upload_stamp = 1713837476679
  let descriptionTemplate = `
  Thanks for watching the video!
@@ -18,33 +18,30 @@
   time since last run: {time_since_last_run}
   Last Run: {time_since_last_run_stamp}
  `
- let titleTemplate = "Automated Video - {views}"
+ let titleTemplate = 'Automated Video - {views}'
  let thumbNailData = () => {}
-function updateVideo() {
-
+ function updateVideo () {
   //  console.log(response.items[0])
   // console.log(PropertiesService.getScriptProperties().getProperty('VIDEO_ID'))
-  const video = getVideoInfo()
+   const video = getVideoInfo()
   // todo get from server
-  let obj = JSON.parse(UrlFetchApp.fetch('https://mybot.saahild.com/yt/metadata').getContentText()) || { statistics: video.statistics, last_run: Date.now() - (240000) }
-  if(obj.none) obj =  { statistics: video.statistics, last_run: Date.now() - (240000) }
+   let obj = JSON.parse(UrlFetchApp.fetch('https://mybot.saahild.com/yt/metadata').getContentText()) || { statistics: video.statistics, last_run: Date.now() - (240000) }
+   if (obj.none) obj = { statistics: video.statistics, last_run: Date.now() - (240000) }
   // console.log(statistics)
-  let {
-    statistics, last_run, none 
+   let {
+    statistics, last_run, none
   } = obj
   // console.log(video.snippet.thumbnails.hig)
-  // 
+  //
   // YouTube.newVideo()
-  
 
-let formatedTime = ms(Math.floor(Date.now() - video_upload_stamp))
-var resource = {
-      snippet: {
-        title: titleTemplate
-        .split("{views}").join(video.statistics.viewCount)
-        ,
-        description:descriptionTemplate
-        .split("{views}").join(video.statistics.viewCount)
+   let formatedTime = ms(Math.floor(Date.now() - video_upload_stamp))
+   var resource = {
+     snippet: {
+       title: titleTemplate
+        .split('{views}').join(video.statistics.viewCount),
+       description: descriptionTemplate
+        .split('{views}').join(video.statistics.viewCount)
         .split('{likes}').join(video.statistics.likeCount)
         .split('{favs}').join(video.statistics.favoriteCount)
         .split('{comments}').join(video.statistics.commentCount)
@@ -55,37 +52,35 @@ var resource = {
         .split('{comments_diff}').join(video.statistics.commentCount - statistics.commentCount)
         .split('{time_since_last_run}').join(ms(Math.floor(Date.now() - last_run)))
         .split('{time_since_last_run_stamp}').join(Date.now()),
-        categoryId: '22'
-      },
-      
-      id: video.id
-    };
+       categoryId: '22'
+     },
+
+     id: video.id
+   }
     // video.snippet.thumbnails.default.
    console.log(resource)
-   video.statistics.upload_date  = 
+   video.statistics.upload_date =
   // video.snippet.description = video.snippet.description + " test from api"
   // YouTube.Videos.update(video, part)
   // UrlFetchApp.fetch()
   YouTube.Thumbnails.set(video.id, UrlFetchApp.fetch('https://mybot.saahild.com/yt/thumbnail', {
-    method: "POST",
+    method: 'POST',
     payload: JSON.stringify(video.statistics),
     headers: {
-      "Content-type": "application/json"
+      'Content-type': 'application/json'
     }
   }).getBlob())
-  YouTube.Videos.update(resource, part, {'id': PropertiesService.getScriptProperties().getProperty('VIDEO_ID')})
-}
-function getVideoInfoLog() {
-  console.log(getVideoInfo())
-}
-function getVideoInfo() {
+   YouTube.Videos.update(resource, part, {'id': PropertiesService.getScriptProperties().getProperty('VIDEO_ID')})
+ }
+ function getVideoInfoLog () {
+   console.log(getVideoInfo())
+ }
+ function getVideoInfo () {
+   let params = {'id': PropertiesService.getScriptProperties().getProperty('VIDEO_ID')}
 
-  let params = {'id': PropertiesService.getScriptProperties().getProperty('VIDEO_ID')};
-  
-   var response = YouTube.Videos.list(part, params);
-   return response.items[0];
-}
-
+   var response = YouTube.Videos.list(part, params)
+   return response.items[0]
+ }
 
 /**
 
@@ -93,19 +88,17 @@ function getVideoInfo() {
 
  */
 
+ var s = 1000
 
-var s = 1000;
+ var m = s * 60
 
-var m = s * 60;
+ var h = m * 60
 
-var h = m * 60;
+ var d = h * 24
 
-var d = h * 24;
+ var w = d * 7
 
-var w = d * 7;
-
-var y = d * 365.25;
-
+ var y = d * 365.25
 
 /**
 
@@ -133,33 +126,25 @@ var y = d * 365.25;
 
  */
 
+ function ms (val, options) {
+   options = options || {}
 
-function ms (val, options) {
+   var type = typeof val
 
-  options = options || {};
+   if (type === 'string' && val.length > 0) {
+     return parse(val)
+   } else if (type === 'number' && isFinite(val)) {
+     return options.long ? fmtLong(val) : fmtShort(val)
+   }
 
-  var type = typeof val;
-
-  if (type === 'string' && val.length > 0) {
-
-    return parse(val);
-
-  } else if (type === 'number' && isFinite(val)) {
-
-    return options.long ? fmtLong(val) : fmtShort(val);
-
-  }
-
-  throw new Error(
+   throw new Error(
 
     'val is not a non-empty string or a valid number. val=' +
 
       JSON.stringify(val)
 
-  );
-
-};
-
+  )
+ };
 
 /**
 
@@ -175,119 +160,109 @@ function ms (val, options) {
 
  */
 
+ function parse (str) {
+   str = String(str)
 
-function parse(str) {
+   if (str.length > 100) {
+     return
+   }
 
-  str = String(str);
-
-  if (str.length > 100) {
-
-    return;
-
-  }
-
-  var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
+   var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
 
     str
 
-  );
+  )
 
-  if (!match) {
+   if (!match) {
+     return
+   }
 
-    return;
+   var n = parseFloat(match[1])
 
-  }
+   var type = (match[2] || 'ms').toLowerCase()
 
-  var n = parseFloat(match[1]);
+   switch (type) {
+     case 'years':
 
-  var type = (match[2] || 'ms').toLowerCase();
+     case 'year':
 
-  switch (type) {
+     case 'yrs':
 
-    case 'years':
+     case 'yr':
 
-    case 'year':
+     case 'y':
 
-    case 'yrs':
+       return n * y
 
-    case 'yr':
+     case 'weeks':
 
-    case 'y':
+     case 'week':
 
-      return n * y;
+     case 'w':
 
-    case 'weeks':
+       return n * w
 
-    case 'week':
+     case 'days':
 
-    case 'w':
+     case 'day':
 
-      return n * w;
+     case 'd':
 
-    case 'days':
+       return n * d
 
-    case 'day':
+     case 'hours':
 
-    case 'd':
+     case 'hour':
 
-      return n * d;
+     case 'hrs':
 
-    case 'hours':
+     case 'hr':
 
-    case 'hour':
+     case 'h':
 
-    case 'hrs':
+       return n * h
 
-    case 'hr':
+     case 'minutes':
 
-    case 'h':
+     case 'minute':
 
-      return n * h;
+     case 'mins':
 
-    case 'minutes':
+     case 'min':
 
-    case 'minute':
+     case 'm':
 
-    case 'mins':
+       return n * m
 
-    case 'min':
+     case 'seconds':
 
-    case 'm':
+     case 'second':
 
-      return n * m;
+     case 'secs':
 
-    case 'seconds':
+     case 'sec':
 
-    case 'second':
+     case 's':
 
-    case 'secs':
+       return n * s
 
-    case 'sec':
+     case 'milliseconds':
 
-    case 's':
+     case 'millisecond':
 
-      return n * s;
+     case 'msecs':
 
-    case 'milliseconds':
+     case 'msec':
 
-    case 'millisecond':
+     case 'ms':
 
-    case 'msecs':
+       return n
 
-    case 'msec':
+     default:
 
-    case 'ms':
-
-      return n;
-
-    default:
-
-      return undefined;
-
-  }
-
-}
-
+       return undefined
+   }
+ }
 
 /**
 
@@ -303,39 +278,27 @@ function parse(str) {
 
  */
 
+ function fmtShort (ms) {
+   var msAbs = Math.abs(ms)
 
-function fmtShort(ms) {
+   if (msAbs >= d) {
+     return Math.round(ms / d) + 'd'
+   }
 
-  var msAbs = Math.abs(ms);
+   if (msAbs >= h) {
+     return Math.round(ms / h) + 'h'
+   }
 
-  if (msAbs >= d) {
+   if (msAbs >= m) {
+     return Math.round(ms / m) + 'm'
+   }
 
-    return Math.round(ms / d) + 'd';
+   if (msAbs >= s) {
+     return Math.round(ms / s) + 's'
+   }
 
-  }
-
-  if (msAbs >= h) {
-
-    return Math.round(ms / h) + 'h';
-
-  }
-
-  if (msAbs >= m) {
-
-    return Math.round(ms / m) + 'm';
-
-  }
-
-  if (msAbs >= s) {
-
-    return Math.round(ms / s) + 's';
-
-  }
-
-  return ms + 'ms';
-
-}
-
+   return ms + 'ms'
+ }
 
 /**
 
@@ -351,39 +314,27 @@ function fmtShort(ms) {
 
  */
 
+ function fmtLong (ms) {
+   var msAbs = Math.abs(ms)
 
-function fmtLong(ms) {
+   if (msAbs >= d) {
+     return plural(ms, msAbs, d, 'day')
+   }
 
-  var msAbs = Math.abs(ms);
+   if (msAbs >= h) {
+     return plural(ms, msAbs, h, 'hour')
+   }
 
-  if (msAbs >= d) {
+   if (msAbs >= m) {
+     return plural(ms, msAbs, m, 'minute')
+   }
 
-    return plural(ms, msAbs, d, 'day');
+   if (msAbs >= s) {
+     return plural(ms, msAbs, s, 'second')
+   }
 
-  }
-
-  if (msAbs >= h) {
-
-    return plural(ms, msAbs, h, 'hour');
-
-  }
-
-  if (msAbs >= m) {
-
-    return plural(ms, msAbs, m, 'minute');
-
-  }
-
-  if (msAbs >= s) {
-
-    return plural(ms, msAbs, s, 'second');
-
-  }
-
-  return ms + ' ms';
-
-}
-
+   return ms + ' ms'
+ }
 
 /**
 
@@ -391,11 +342,8 @@ function fmtLong(ms) {
 
  */
 
+ function plural (ms, msAbs, n, name) {
+   var isPlural = msAbs >= n * 1.5
 
-function plural(ms, msAbs, n, name) {
-
-  var isPlural = msAbs >= n * 1.5;
-
-  return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
-
-}
+   return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '')
+ }
