@@ -40,5 +40,5 @@ router.post('/thumbnail', async (req, res) => {
 app.use('/yt', router)
 
 app.listen(process.env.PORT || 3000, () => {
- console.log('on ::3000')   
+  console.log('on ::3000')
 })
